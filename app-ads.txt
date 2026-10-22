@@ -1,0 +1,7 @@
+# app-ads.txt for Brushwave Games (Brush Bomb)
+# Served at the root of https://csterling7222-arch.github.io/ (the developer website in the store listings).
+#
+# PLACEHOLDER: no ad network lines yet.
+# When the AdMob account exists, add the exact line AdMob shows under Apps > View all apps > app-ads.txt
+# (format: google.com, <your publisher ID>, DIRECT, f08c47fec0942fa0).
+# If you add AppLovin or Unity Ads mediation, append the lines each network gives you in its dashboard.
