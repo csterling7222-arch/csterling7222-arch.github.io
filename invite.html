@@ -39,14 +39,15 @@
 <body>
 <main>
   <img class="icon" src="img/icon-512.png" alt="Brush Bomb app icon" width="112" height="112">
-  <h1>You're invited to Brush Bomb!</h1>
+  <h1 id="title">You're invited to Brush Bomb!</h1>
   <p class="sub">The colourful block puzzle where one-colour lines score five times the points.</p>
 
   <div class="card" id="code-card" hidden>
-    <p class="label">Your friend's code</p>
+    <p class="label" id="code-label">Your friend's code</p>
     <div class="code" id="code"></div>
     <button class="copy" id="copy" type="button">Copy code</button>
-    <p class="label" style="margin-top:12px">Enter it in your first week for <b>100 free Paint</b>.</p>
+    <p class="label" style="margin-top:12px" id="code-reward">Enter it in your first week for <b>100 free Paint</b>.</p>
+    <p class="label" id="open-app" hidden>Already installed? <a id="open-link" href="#">Open it in Brush Bomb</a></p>
   </div>
   <div class="card" id="no-code" hidden>
     <p class="label">No friend code in this link. Ask your friend for their code (it looks like K7M-Q2XR).</p>
@@ -59,10 +60,15 @@
   </div>
   <p class="soon">Coming soon to iPhone, iPad and Android.</p>
 
-  <ol>
+  <ol id="steps-friend">
     <li>Install Brush Bomb and open it.</li>
     <li>On the Home screen, tap <b>Invite friends</b>.</li>
     <li>Type the code into the friend code box and tap <b>Redeem</b>.</li>
+  </ol>
+  <ol id="steps-creator" hidden>
+    <li>Install Brush Bomb and open it.</li>
+    <li>On the Home screen, tap <b>Have a creator code?</b></li>
+    <li>Type the code and tap <b>Redeem</b>.</li>
   </ol>
 </main>
 <footer>
@@ -73,6 +79,20 @@
     var ALPHA = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
     var raw = new URLSearchParams(location.search).get('code') || '';
     var code = raw.toUpperCase().replace(/[\s\-_.]/g, '');
+    // creator codes: keep in sync with CREATOR_CODES / CREATOR in src/core/creator.ts (docs/creator-codes.md)
+    var CREATORS = ['CHOA'];
+    if (CREATORS.indexOf(code) >= 0) {
+      document.title = 'Get free Paint in Brush Bomb';
+      document.getElementById('title').textContent = 'Get 150 free Paint in Brush Bomb!';
+      document.getElementById('code-label').textContent = 'Creator code';
+      document.getElementById('code-reward').innerHTML = 'Enter it in your first 2 weeks for <b>150 free Paint</b>.';
+      document.getElementById('steps-friend').hidden = true;
+      document.getElementById('steps-creator').hidden = false;
+      document.getElementById('open-link').href = 'brushbomb://code/' + code;
+      document.getElementById('open-app').hidden = false;
+      show(code);
+      return;
+    }
     var ok = code.length === 7 && code.split('').every(function (c) { return ALPHA.indexOf(c) >= 0; });
     if (ok) {
       var sum = 0;
@@ -80,7 +100,9 @@
       ok = ALPHA[sum % ALPHA.length] === code[6];
     }
     if (!ok) { document.getElementById('no-code').hidden = false; return; }
-    var shown = code.slice(0, 3) + '-' + code.slice(3);
+    show(code.slice(0, 3) + '-' + code.slice(3));
+  })();
+  function show(shown) {
     document.getElementById('code').textContent = shown;
     document.getElementById('code-card').hidden = false;
     document.getElementById('copy').addEventListener('click', function () {
@@ -89,7 +111,7 @@
       if (navigator.clipboard) navigator.clipboard.writeText(shown).then(done, function () {});
       else { var r = document.createRange(); r.selectNode(document.getElementById('code')); getSelection().removeAllRanges(); getSelection().addRange(r); }
     });
-  })();
+  }
 </script>
 </body>
 </html>
